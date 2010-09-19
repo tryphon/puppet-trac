@@ -65,7 +65,7 @@ class trac {
     mode => 755
   }
 
-  define project($repository_path = '', $description = '') {
+  define project($repository_path = '', $description = '', $config = '') {
     include trac
 
     $real_repository_path = $repository_path ? {
@@ -88,6 +88,11 @@ class trac {
       group => "www-data",
       creates => "/var/lib/trac/$name/db/trac.db",
       require => [File["/var/lib/trac/$name"], Package[trac-git]]
+    }
+
+    $real_config = $config ? {
+      '' => "files/trac/trac.ini.$name",
+      default => $config
     }
 
     # Install a trac.ini file for each project
@@ -119,6 +124,16 @@ class trac {
       user => "www-data",
       require => Exec["trac-initenv-$project"]
     }
+  }
+
+  file { "/usr/local/bin/trac-robotstxt":
+    source => "puppet:///trac/trac-robotstxt",
+    mode => 755
+  }
+
+  file { ["/usr/share/trac/plugins", "/var/cache/trac"]:
+    ensure => directory,
+    require => Package[trac]
   }
 }
 

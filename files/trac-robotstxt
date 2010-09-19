@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby 
+
+def project_names_from_directories
+  Dir["/var/lib/trac/*"].collect { |d| File.basename(d) }
+end
+
+base_url = ARGV.shift
+project_names = (ARGV.empty? ? project_names_from_directories : ARGV)
+
+class TracProjectRobots
+
+  attr_reader :name, :dissallowed_urls
+
+  def initialize(name)
+    @name = name
+    @dissallowed_wiki_pages = %w{Trac* WikiFormatting RecentChanges TitleIndex Wiki* CamelCase InterMapTxt InterTrac InterWiki PageTemplates SandBox}
+    @dissallowed_urls = %w{attachement changeset timeline? diff log newticket search query report login logout prefs about}
+  end
+
+  def dissallowed_wiki_pages
+    @dissallowed_wiki_pages.collect do |page|
+      "wiki/#{page}"
+    end
+  end
+
+  def dissallowed_urls
+    (@dissallowed_urls + dissallowed_wiki_pages).collect do |url|
+      "Disallow: /#{name}/#{url}"
+    end
+  end
+
+  def sitemaps(base_url)
+    ["Sitemap: #{base_url}/#{name}/sitemap.xml"]
+  end
+
+  def lines(base_url)
+    dissallowed_urls + sitemaps(base_url)
+  end
+
+end
+
+projects = project_names.collect { |name| TracProjectRobots.new(name) }
+
+puts "User-agent: *"
+puts projects.collect{ |p| p.lines(base_url) }.uniq.sort.join("\n")
