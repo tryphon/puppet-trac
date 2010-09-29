@@ -18,7 +18,7 @@ class trac {
   package { trac: }
 
   package { trac-git: 
-    ensure => "0.0.20090320-1~bpo50+2",
+    ensure => "0.0.20100513-2~bpo50+1",
     require => Apt::Preferences[trac-git]
   }
 
