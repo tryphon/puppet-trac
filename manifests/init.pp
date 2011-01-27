@@ -131,10 +131,18 @@ class trac {
     mode => 755
   }
 
-  file { ["/usr/share/trac/plugins", "/var/cache/trac"]:
+  file { "/usr/share/trac/plugins":
     ensure => directory,
     require => Package[trac]
   }
+
+  file { "/var/cache/trac":
+    owner => www-data,
+    ensure => directory,
+    require => Package[trac]
+  }
+
+  
 
   define plugin($egg, $url) {
     exec { "install-trac-plugin-$name":
