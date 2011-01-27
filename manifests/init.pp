@@ -135,6 +135,15 @@ class trac {
     ensure => directory,
     require => Package[trac]
   }
+
+  define plugin($egg, $url) {
+    exec { "install-trac-plugin-$name":
+      command => "wget -O /usr/share/trac/plugins/$egg $url",
+      creates => "/usr/share/trac/plugins/$egg",
+      require => File["/usr/share/trac/plugins"]
+    }
+  }
+
 }
 
 
@@ -156,12 +165,15 @@ class trac::www::basic {
 }
 
 class trac::plugin::sitemap {
-
-  exec { "install-trac-plugin-tracsitemap":
-    command => "wget -O /usr/share/trac/plugins/TracSitemap-1.0-py2.5.egg http://trac-hacks.org/attachment/wiki/TracSitemapPlugin/TracSitemap-1.0-py2.5.egg?format=raw",
-    creates => "/usr/share/trac/plugins/TracSitemap-1.0-py2.5.egg",
-    require => File["/usr/share/trac/plugins"]
+  trac::plugin { tracsitemap:
+    egg => "TracSitemap-1.0-py2.5.egg",
+    url => "http://trac-hacks.org/attachment/wiki/TracSitemapPlugin/TracSitemap-1.0-py2.5.egg?format=raw"
   }
-
 }
 
+class trac::plugin::batchmodify {
+  trac::plugin { batchmodify: 
+    egg => "BatchModify-0.8.0_trac0.11-py2.5.egg",
+    url => "http://trac-hacks.org/export/9801/batchmodifyplugin/0.11/tags/BatchModify-0.8.0_trac0.11-py2.5.egg"
+  }
+}
