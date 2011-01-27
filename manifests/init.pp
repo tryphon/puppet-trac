@@ -142,8 +142,6 @@ class trac {
     require => Package[trac]
   }
 
-  
-
   define plugin($egg, $url) {
     exec { "install-trac-plugin-$name":
       command => "wget -O /usr/share/trac/plugins/$egg $url",
@@ -183,5 +181,16 @@ class trac::plugin::batchmodify {
   trac::plugin { batchmodify: 
     egg => "BatchModify-0.8.0_trac0.11-py2.5.egg",
     url => "http://trac-hacks.org/export/9801/batchmodifyplugin/0.11/tags/BatchModify-0.8.0_trac0.11-py2.5.egg"
+  }
+
+  define permission($project) {
+    $user = $name
+    $project_directory = "/var/lib/trac/$project"
+    exec { "batchmodify-add-permission-on-$project-for-$user":
+      command => "trac-admin $project_directory permission add $user TICKET_BATCH_MODIFY",
+      unless => "trac-admin $project_directory permission list | grep '^$user.*TICKET_BATCH_MODIFY'",
+      user => "www-data",
+      require => Exec["trac-initenv-$project"]
+    }
   }
 }
