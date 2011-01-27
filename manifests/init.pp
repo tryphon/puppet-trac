@@ -17,6 +17,12 @@ class trac {
 
   package { trac: }
 
+  apt::preferences { trac:
+    package => trac, 
+    pin => "release a=lenny-backports",
+    priority => 999
+  }
+
   package { trac-git: 
     ensure => "0.0.20100513-2~bpo50+1",
     require => Apt::Preferences[trac-git]
