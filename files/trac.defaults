@@ -37,7 +37,7 @@ src =
 width = -1
 
 [inherit]
-plugins_dir = 
+plugins_dir = /usr/share/trac/plugins
 templates_dir = 
 
 [logging]
