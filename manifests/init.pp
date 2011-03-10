@@ -191,8 +191,7 @@ class trac::plugin::batchmodify {
     url => "http://trac-hacks.org/export/9801/batchmodifyplugin/0.11/tags/BatchModify-0.8.0_trac0.11-py2.5.egg"
   }
 
-  define permission($user) {
-    $project = $name
+  define permission($user, $project = $name) {
     $project_directory = "/var/lib/trac/$project"
     exec { "batchmodify-add-permission-on-$project-for-$user":
       command => "trac-admin $project_directory permission add $user TICKET_BATCH_MODIFY",
