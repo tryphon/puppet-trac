@@ -197,7 +197,7 @@ class trac::plugin::batchmodify {
       command => "trac-admin $project_directory permission add $user TICKET_BATCH_MODIFY",
       unless => "trac-admin $project_directory permission list | grep '^$user.*TICKET_BATCH_MODIFY'",
       user => "www-data",
-      require => Exec["trac-initenv-$project"]
+      require => [Exec["trac-initenv-$project"], Trac::Plugin[batchmodify]]
     }
   }
 }
