@@ -15,7 +15,7 @@ class trac {
   include apache2::auth::pam
   include apt::tryphon
 
-  package { trac: }
+  package { trac: ensure => latest }
 
   apt::preferences { trac:
     package => trac, 
