@@ -15,6 +15,12 @@ class trac {
   include apache2::auth::pam
   include apt::tryphon
 
+  if $debian::lenny {
+    $python_version = "2.5"
+  } else {
+    $python_version = "2.6"
+  }
+
   package { trac: ensure => latest }
 
   apt::preferences { trac:
@@ -24,7 +30,7 @@ class trac {
   }
 
   package { trac-git: 
-    ensure => "0.0.20100513-2~bpo50+1",
+    ensure => latest,
     require => Apt::Preferences[trac-git]
   }
 
@@ -180,15 +186,15 @@ class trac::www::basic {
 
 class trac::plugin::sitemap {
   trac::plugin { tracsitemap:
-    egg => "TracSitemap-1.0-py2.5.egg",
-    url => "http://trac-hacks.org/attachment/wiki/TracSitemapPlugin/TracSitemap-1.0-py2.5.egg?format=raw"
+    egg => "TracSitemap-1.0-py${trac::python_version}.egg",
+    url => "http://trac-hacks.org/attachment/wiki/TracSitemapPlugin/TracSitemap-1.0-py${trac::python_version}.egg?format=raw"
   }
 }
 
 class trac::plugin::batchmodify {
   trac::plugin { batchmodify: 
-    egg => "BatchModify-0.8.0_trac0.11-py2.5.egg",
-    url => "http://trac-hacks.org/export/9801/batchmodifyplugin/0.11/tags/BatchModify-0.8.0_trac0.11-py2.5.egg"
+    egg => "BatchModify-0.8.0_trac0.11-py${trac::python_version}.egg",
+    url => "http://trac-hacks.org/export/9801/batchmodifyplugin/0.11/tags/BatchModify-0.8.0_trac0.11-py${trac::python_version}.egg"
   }
 
   define permission($user, $project = $name) {
