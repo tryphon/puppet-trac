@@ -23,23 +23,30 @@ class trac {
 
   package { trac: ensure => latest }
 
-  apt::preferences { trac:
-    package => trac, 
-    pin => "release a=lenny-backports",
-    priority => 999
+  if $debian::lenny {
+    apt::preferences { trac:
+      package => trac, 
+      pin => "release a=lenny-backports",
+      priority => 999,
+      before => Package[trac]
+    }
   }
 
   package { trac-git: 
-    ensure => latest,
-    require => Apt::Preferences[trac-git]
+    ensure => latest
   }
 
-  apt::preferences { trac-git:
-    package => trac-git, 
-    pin => "release a=lenny-backports",
-    priority => 999
+  if $debian::lenny {
+    apt::preferences { trac-git:
+      package => trac-git, 
+      pin => "release a=lenny-backports",
+      priority => 999,
+      before => Package[trac-git]
+    }
   }
 
+  package { libjs-jquery: }
+  
   # Directory to store all trac projects
   file { "/var/lib/trac":
     ensure => directory
@@ -122,7 +129,7 @@ class trac {
     # Should be executed only by the first project
     exec { "tracadmin-deploy-$name":
       command => "trac-admin /var/lib/trac/$name deploy /var/www/trac && chmod +x /var/www/trac/cgi-bin/trac.cgi /var/www/trac/cgi-bin/trac.fcgi",
-      creates => "/var/www/trac",
+      creates => "/var/www/trac/cgi-bin/trac.cgi",
       require => Exec["trac-initenv-$name"]
     }
   }
