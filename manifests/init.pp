@@ -187,7 +187,7 @@ class trac::www::basic {
 
   apache2::confd_file { trac:
     source => "puppet:///trac/apache2.conf",
-    require => [File["/var/lib/trac"], Package[libapache2-mod-fcgid]]
+    require => [File["/var/lib/trac"], Package[libapache2-mod-fcgid], Package[libapache2-mod-auth-pam]]
   }
 }
 
