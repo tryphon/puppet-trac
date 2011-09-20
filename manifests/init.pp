@@ -47,6 +47,8 @@ class trac {
 
   package { libjs-jquery: }
   package { enscript: }
+  # Require to prevent loading errors
+  package { python-subversion: }
   
   # Directory to store all trac projects
   file { "/var/lib/trac":
