@@ -141,7 +141,7 @@ class trac {
   # Add TRAC_ADMIN permission to user in a given project (using trac-admin)
   define admin($project, $user) {
     $project_directory = "/var/lib/trac/$project"
-    exec { "tracadmin-$project-add-admin-$user":
+    exec { "tracadmin-${project}-add-admin-$user":
       command => "trac-admin $project_directory permission add $user TRAC_ADMIN",
       # 'permission list $user' doesn't return TRAC_ADMIN but detailled privilegies
       unless => "trac-admin $project_directory permission list | grep '^$user.*TRAC_ADMIN'",
@@ -209,9 +209,9 @@ class trac::plugin::batchmodify {
 
   define permission($user, $project = $name) {
     $project_directory = "/var/lib/trac/$project"
-    exec { "batchmodify-add-permission-on-$project-for-$user":
+    exec { "batchmodify-add-permission-on-${project}-for-$user":
       command => "trac-admin $project_directory permission add $user TICKET_BATCH_MODIFY",
-      unless => "trac-admin $project_directory permission list | grep '^$user.*TICKET_BATCH_MODIFY'",
+      unless => "trac-admin $project_directory permission list | grep '^${user}.*TICKET_BATCH_MODIFY'",
       user => "www-data",
       require => [Exec["trac-initenv-$project"], Trac::Plugin[batchmodify]]
     }
