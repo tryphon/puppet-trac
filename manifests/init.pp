@@ -208,6 +208,7 @@ class trac::plugin::batchmodify {
   }
 
   define permission($user, $project = $name) {
+    include trac::plugin::batchmodify
     $project_directory = "/var/lib/trac/$project"
     exec { "batchmodify-add-permission-on-${project}-for-$user":
       command => "trac-admin $project_directory permission add $user TICKET_BATCH_MODIFY",
